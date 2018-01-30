@@ -31,8 +31,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-//        tableView.pin.all()
-        tableView.frame = view.frame
+        
+        // If use PinLayout, scrolling tableView will be relayout repeatedly and acts wired. Using frame will be fine
+        
+        tableView.pin.all()
+//        tableView.frame = view.frame
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -46,6 +49,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        // some testing code
         self.view.setNeedsLayout()
         self.view.layoutIfNeeded()
     }
