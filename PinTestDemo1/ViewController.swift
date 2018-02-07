@@ -21,7 +21,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: kCommonCellIdentifier)
+        tableView.backgroundColor = .red
         view.addSubview(tableView)
+        
+        // a view has applied some transformation
+        tableView.transform = .init(rotationAngle: CGFloat.pi * 0.5)
     }
 
     override func didReceiveMemoryWarning() {
@@ -32,14 +36,21 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
-        // If use PinLayout, scrolling tableView will be relayout repeatedly and acts wired. Using frame will be fine
+        /* PinLayout and manual layout do the same thing, but manual layout is what I want. This is my problem.
+         If a view has applied some transformation, I think is hard to use top(), left() or other constraints to layout it.
+         The reference system has been changed because of transformation
+         */
+        tableView.pin.top().left().right().marginTop(80).height(100)
         
-        tableView.pin.all()
-//        tableView.frame = view.frame
+        
+        // This is what I want. The same frame as that the view before transforming
+        
+//        tableView.frame = CGRect.init(origin: .init(x: 0, y: 80), size: CGSize.init(width: view.frame.width, height: 100))
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 50
+        return 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
