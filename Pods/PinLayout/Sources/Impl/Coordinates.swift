@@ -94,9 +94,13 @@ class Coordinates {
          the view's transform. So view's transforms won't be affected/altered by PinLayout.
          */
         let adjustedRect = Coordinates.adjustRectToDisplayScale(rect)
-        view.center = CGPoint(x: adjustedRect.midX, y: adjustedRect.midY)
-        view.bounds = CGRect(origin: .zero, size: adjustedRect.size)
-    }
+
+        // NOTE: The center is offset by the layer.anchorPoint, so we have to take it into account.
+        view.center = CGPoint(x: adjustedRect.origin.x + (adjustedRect.width * view.layer.anchorPoint.x),
+                              y: adjustedRect.origin.y + (adjustedRect.height * view.layer.anchorPoint.y))
+        // NOTE: We must set only the bounds's size and keep the origin.
+        view.bounds.size = adjustedRect.size
+}
     
     static func getUntransformedViewRect(_ view: UIView) -> CGRect {
         /*
@@ -105,10 +109,12 @@ class Coordinates {
          By setting the view's center and bounds we really set the frame of the non-transformed view, and this keep
          the view's transform. So view's transforms won't be affected/altered by PinLayout.
          */
-        let bounds = view.bounds
-        let origin = CGPoint(x: view.center.x - bounds.width / 2, y: view.center.y - bounds.height / 2)
+        let size = view.bounds.size
+        // See setUntransformedViewRect(...) for details about this calculation.
+        let origin = CGPoint(x: view.center.x - (size.width * view.layer.anchorPoint.x),
+                             y: view.center.y - (size.height * view.layer.anchorPoint.y))
 
-        return CGRect(origin: origin, size: bounds.size)
+        return CGRect(origin: origin, size: size)
     }
 
     static func roundFloatToDisplayScale(_ pointValue: CGFloat) -> CGFloat {
